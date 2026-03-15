@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app.kubernetes.io/name: cm-secret-pod
+  name: cm-secret-pod
+spec:
+  containers:
+  - command: ["sh", "-c", "env && sleep 3600"]
+    envFrom:
+    - secretRef:
+        name: db-secret
+    - configMapRef:
+        name: app-config
+    image: busybox
+    name: cm-secret-pod
+    resources:
+      limits:
+        cpu: 500m
+        memory: 128Mi
+      requests:
+        cpu: 500m
+        memory: 128Mi

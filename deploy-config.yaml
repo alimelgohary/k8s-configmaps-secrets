@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-configured
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webapp-configured
+  template:
+    metadata:
+      labels:
+        app: webapp-configured
+    spec:
+      containers:
+      - name: webapp-configured
+        image: busybox
+        command: ["sh", "-c", "echo APP_ENV=$APP_ENV && echo DB_USER=$DB_USER && echo DB_PASSWORD=$DB_PASSWORD && sleep 3600"]
+        env:
+          - name: APP_ENV
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: APP_ENV
+
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: DB_USER
+
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: DB_PASSWORD
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
